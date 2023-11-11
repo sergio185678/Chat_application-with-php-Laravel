@@ -1,0 +1,122 @@
+#chat-body{
+    padding:0px;
+    height:80vh;
+    overflow-y: scroll;
+}
+#msg-body{
+    padding:0px;
+    height:68vh;
+    overflow-y: scroll;
+}
+.chat-item{
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #c2c2c2;
+    background-color: #ffffff;
+    color:#000000;
+    cursor: pointer;
+    padding: 10px;
+}
+.chat-item:hover{
+    background-color: #c2c2c2;
+}
+.d-blockk{
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.chat-item-img{
+    width: 60px;
+    height:60px;
+    z-index: 0;
+}
+.chat-item-users{
+    font-size: 17px;
+}
+.new-msg-count{
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background-color: blue;
+    color:#ffffff;
+    text-align: center;
+    font-family: arial;
+    line-height: 22px;
+}
+.no-chat{
+    text-align: center;
+    margin-bottom: 16px;
+    padding: 7px 0px;
+    clear:both;
+}
+.msg-item{
+    position: relative;
+    margin-bottom: 16px;
+    padding: 7px;
+    clear:both;
+}
+.msg-item-img{
+    height: 60px;
+    width: 60px;
+    position: absolute;
+    display: inline !important;
+    margin-left: 10px;
+    top:0px;
+    z-index:1;
+}
+.msg-item-txt{
+    position: relative;
+    display: inline-block;
+    margin-left: 77px;
+    border:1px solid #c2c2c2;
+    border-radius: 4px;
+    padding: 10px 12px;
+    max-width: 70%;
+    background-color: #ffffff;
+    margin-bottom: 12px;
+}
+.msg-item-txt::before{
+    content: " ";
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid;
+    border-right-color: inherit;
+    position: absolute;
+    left: -10px;
+    top:6px;
+}
+.msg-item-data{
+    position: relative;
+    display: inline-block;
+    color:#898989;
+    font-size: 12px;
+    text-align: right;
+    margin-top: 7px;
+    right:-2px;
+    bottom: -7px;
+}
+.me .msg-item-data{
+    color:#f2f2f2;
+}
+.me{
+    margin-bottom: 60px !important;
+}
+.me .msg-item-img{
+    right: 0;
+}
+.me .msg-item-txt{
+    background-color: #3097d1;
+    color:#ffffff;
+    float: right;
+    margin-right: 77px;
+}
+.me .msg-item-txt::before{
+    border-right: none;
+    border-left: 10px solid;
+    left:auto;
+    right: -10px;
+    border-left-color: #3097d1;
+}
