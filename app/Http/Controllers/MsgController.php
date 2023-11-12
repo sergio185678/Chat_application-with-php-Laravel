@@ -45,6 +45,13 @@ class MsgController extends Controller
             $resp["status"]=1;
             $resp["txt"]="Successfully Create A New Msg";
             $resp["obj"]=$msg;
+
+            $c=Chat::find($request->c_id);
+            if(count($c->msgs)>1){
+                $resp["fst"]=0;
+            }else{
+                $resp["fst"]=1;
+            }
         } else{
             $resp["status"]=0;
             $resp["txt"]="Something went wrong!";
@@ -71,21 +78,14 @@ class MsgController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function message_list(Request $request)
     {
         $chat=Chat::find($request->c_id);
-        $me=Auth::user();
-        if($request->me==1){
-            $msgs=$chat->msgs()->where("seen","=",0)->where("user_id","=",$me->id)
-            ->orberBy("id","desc")->take(1)->get();
+        if($request->limit>10){
+            $msgs=$chat->msgs()->take($request->limit)->skip($request->limit-10)->orberBy("id","asc")->get();
         } else{
-            $msgs=$chat->msgs()->where("seen","=",0)->where("user_id","<>",$me->id)->get();
-        }
-        if(count($msgs)>0){
-            $resp["status"]=1;
-            $resp["txt"]=(string) view("layouts.msg_list",compact("msgs","me"));
-        }else{
-            $resp["status"]=2;
+            $msgs=$chat->msgs()->take($request->limit)->orderBy("id","asc")->get();
         }
         $me=Auth::user();
         $resp['status']=1;
@@ -96,14 +96,18 @@ class MsgController extends Controller
     public function new_message_list(Request $request)
     {
         $chat=Chat::find($request->c_id);
-        if($request->limit>10){
-            $msgs=$chat->msgs()->take($request->limit)->skip($request->limit-10)->orberBy("id","desc")->get();
-        } else{
-            $msgs=$chat->msgs()->take($request->limit)->orderBy("id","desc")->get();
-        }
         $me=Auth::user();
-        $resp['status']=1;
-        $resp['txt']=(string) view ('layouts.msg_list',compact("msgs","me"));
+        if($request->me==1){
+            $msgs=$chat->msgs()->where("seen","=",0)->where("user_id","=",$me->id)->orderBy("id","desc")->take(1)->get();
+        } else{
+            $msgs=$chat->msgs()->where("seen","=",0)->where("user_id","<>",$me->id)->get();
+        }
+        if(count($msgs)>0){
+            $resp["status"]=1;
+            $resp["txt"]=(string) view("layouts.msg_list",compact("msgs","me"));
+        }else{
+            $resp["status"]=2;
+        }
         return json_encode($resp);
     }
 
