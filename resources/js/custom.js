@@ -135,6 +135,7 @@ function msg_load(c_id,tk,limit,first,el){
     })
     .then(data => {
       if(data.status==1){
+        make_active(c_id,tk);
         $("#msg-body").empty().html(data.txt);
         var objDiv=document.getElementById("msg-body");
 
@@ -143,6 +144,7 @@ function msg_load(c_id,tk,limit,first,el){
         }
         $("#create-msg-form").find("#msg").prop("disabled",false);
         $("#create-msg-form").find("#create-msg").prop("disabled",false);
+        msg_seen(c_id,tk,el);
       }
     });
   }
@@ -171,6 +173,7 @@ function new_msg_load(c_id,tk,me=0,fst){
     })
     .then(data => {
       if(data.status==1){
+        make_active(c_id,tk);
         if(fst==0){
           $("#msg-body").append(data.txt);
         }else{
@@ -185,5 +188,42 @@ function new_msg_load(c_id,tk,me=0,fst){
         $("#create-msg-form").find("#create-msg").prop("disabled",false);
       }
     });
+  }
+}
+
+function msg_seen(c_id,tk,el){
+  if(c_id!=null&&c_id!=''){
+    var data_enviar = {
+      c_id:c_id,
+      _token: tk
+    };
+    console.log(data_enviar);
+    fetch('message-seen', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data_enviar),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('La solicitud no se completó correctamente');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if(data.status==1){
+        if(el!=null){
+          el.removeClass("new-msg");
+          el.find(".new-msg-count").remove();
+        }
+      }
+    });
+  }
+}
+
+function make_active(c_id,tk){
+  if(c_id!=null && c_id!="" && !$("#msg").attr("disabled")){
+    
   }
 }

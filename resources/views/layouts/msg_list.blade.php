@@ -1,5 +1,5 @@
 @if (count($msgs)>0)
-  @foreach ($msgs as $msg)
+  @foreach ($msgs->reverse() as $msg)
     <div id="{{$msg->id}}" class="msg-item <?php echo ($msg->user_id == $me->id)?'me':''; ?>">
       <img class="msg-item-img" src="{{asset('img/user-default.PNG')}}">
       <div class="msg-item-txt">

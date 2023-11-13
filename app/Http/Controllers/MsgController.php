@@ -83,9 +83,9 @@ class MsgController extends Controller
     {
         $chat=Chat::find($request->c_id);
         if($request->limit>10){
-            $msgs=$chat->msgs()->take($request->limit)->skip($request->limit-10)->orberBy("id","asc")->get();
+            $msgs=$chat->msgs()->take($request->limit)->skip($request->limit-10)->orberBy("id","desc")->get();
         } else{
-            $msgs=$chat->msgs()->take($request->limit)->orderBy("id","asc")->get();
+            $msgs=$chat->msgs()->take($request->limit)->orderBy("id","desc")->get();
         }
         $me=Auth::user();
         $resp['status']=1;
@@ -107,6 +107,16 @@ class MsgController extends Controller
             $resp["txt"]=(string) view("layouts.msg_list",compact("msgs","me"));
         }else{
             $resp["status"]=2;
+        }
+        return json_encode($resp);
+    }
+
+    public function message_seen(Request $request){
+        $ck=Msg::where("seen","=",0)->where("chat_id","=",$request->c_id)->where("user_id","<>",Auth::user()->id)->update(["seen"=>1]);
+        if($ck){
+            $resp["status"]=1;
+        }else{
+            $resp["status"]=0;
         }
         return json_encode($resp);
     }

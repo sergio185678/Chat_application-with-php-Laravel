@@ -21,7 +21,12 @@
                 ?>
             </div>
         </div>
-        <div class="new-msg-count">6</div>
+        <?php
+            if(array_key_exists($chat->id,$total_msg)){
+                $c=($total_msg[$chat->id]>20)?"20+":$total_msg[$chat->id];
+                echo "<div class='new-msg-count'>".$c."</div>";
+            }
+        ?>
     </div>
     @endforeach
     

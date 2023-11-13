@@ -27,3 +27,4 @@ Route::post('/chat', [App\Http\Controllers\ChatController::class, 'store']);
 Route::post('/message', [App\Http\Controllers\MsgController::class, 'store']);
 Route::post('/message-list', [App\Http\Controllers\MsgController::class, 'message_list']);
 Route::post('/new-message-list', [App\Http\Controllers\MsgController::class, 'new_message_list']);
+Route::post('/message-seen', [App\Http\Controllers\MsgController::class, 'message_seen']);

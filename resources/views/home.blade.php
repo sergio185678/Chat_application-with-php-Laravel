@@ -23,8 +23,7 @@
                         @csrf
                         <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
                             <fieldset class="form-group">
-                                <textarea disabled name="msg" id="msg" class="form-control" placeholer="Write your Message..">
-                                </textarea>
+                                <textarea name="msg" id="msg" class="form-control" placeholder="Write your Message.." disabled></textarea>
                             </fieldset>
                         </div>
                         <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
