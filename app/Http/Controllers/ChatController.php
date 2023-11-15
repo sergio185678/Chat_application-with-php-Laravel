@@ -106,4 +106,10 @@ class ChatController extends Controller
     {
         //
     }
+
+    public function chat_update(){
+        $chats=Auth::user()->chats()->orderby("id","desc")->get();
+        $total_msg=Chat::chat_update($chats);
+        return json_encode($total_msg);
+    }
 }

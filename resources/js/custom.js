@@ -66,7 +66,7 @@ function limpiar(){
   const selectBtn = document.querySelector(".select-btn");
   selectBtn.classList.remove('open');
 }
-
+setInterval(chat_update,1200);
 $("body").on("click",".chat-item",function(){
     $(this).addClass("chat-select").siblings().removeClass("chat-select");
     var c_id=$(this).attr("id");
@@ -75,6 +75,34 @@ $("body").on("click",".chat-item",function(){
 
     var el=$(this);
     msg_load(c_id,tk,10,true,el);
+
+    var textarea=$("#msg");
+    var typingStatus=$("#typing_on");
+    var lastTypedTime=new Date(0);
+    var typingDelayMillis=4000;
+    function refreshTypingStatus(){
+      if(!textarea.attr("disabled")&&textarea.is(":focus")){
+        if(textarea.val()==""||new Date().getTime()-lastTypedTime.getTime()>typingDelayMillis){
+          console.log("affs")
+          set_typing(0);
+        }else{
+          set_typing(1);
+        }
+      }
+    }
+    function updateLastTypedTime(){
+      lastTypedTime=new Date();
+    }
+    setInterval(refreshTypingStatus,2000);
+    textarea.keypress(updateLastTypedTime);
+    textarea.blur(function(){
+      set_typing(0);
+    });
+
+    setInterval(function() {
+      new_msg_load(c_id, tk, 0, 0);
+      }, 5000);
+    setInterval(check_typing,1000);
 })
 
 $("body").on("click","#create-msg",function(){
@@ -104,7 +132,7 @@ $("body").on("click","#create-msg",function(){
     }else if(resp.status==0){
 
     }
-  })
+  });
 })
 
 function msg_load(c_id,tk,limit,first,el){
@@ -135,7 +163,6 @@ function msg_load(c_id,tk,limit,first,el){
     })
     .then(data => {
       if(data.status==1){
-        make_active(c_id,tk);
         $("#msg-body").empty().html(data.txt);
         var objDiv=document.getElementById("msg-body");
 
@@ -145,6 +172,7 @@ function msg_load(c_id,tk,limit,first,el){
         $("#create-msg-form").find("#msg").prop("disabled",false);
         $("#create-msg-form").find("#create-msg").prop("disabled",false);
         msg_seen(c_id,tk,el);
+        make_active(c_id,tk);
       }
     });
   }
@@ -157,7 +185,6 @@ function new_msg_load(c_id,tk,me=0,fst){
       me:me,
       _token: tk
     };
-    console.log(data_enviar);
     fetch('new-message-list', {
       method: 'POST',
       headers: {
@@ -173,7 +200,6 @@ function new_msg_load(c_id,tk,me=0,fst){
     })
     .then(data => {
       if(data.status==1){
-        make_active(c_id,tk);
         if(fst==0){
           $("#msg-body").append(data.txt);
         }else{
@@ -186,6 +212,8 @@ function new_msg_load(c_id,tk,me=0,fst){
         }
         $("#create-msg-form").find("#msg").prop("disabled",false);
         $("#create-msg-form").find("#create-msg").prop("disabled",false);
+        msg_seen(c_id,tk);
+        make_active(c_id,tk);
       }
     });
   }
@@ -224,6 +252,124 @@ function msg_seen(c_id,tk,el){
 
 function make_active(c_id,tk){
   if(c_id!=null && c_id!="" && !$("#msg").attr("disabled")){
-    
+    var data_enviar = {
+      c_id:c_id,
+      _token: tk
+    };
+    console.log(data_enviar);
+    fetch('active', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data_enviar),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('La solicitud no se completó correctamente');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if(data.status==1){
+        
+      }
+    });
   }
+}
+
+function set_typing(con){
+  var c_id=$(".chat-select").attr("id");
+  var tk=$("#create-msg-form").find('input[name=_token]').val();
+  if(c_id!=null && c_id!="" && !$("#msg").attr("disabled")){
+    var data_enviar = {
+      con:con,
+      c_id:c_id,
+      _token: tk
+    };
+    fetch('set-active', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data_enviar),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('La solicitud no se completó correctamente');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if(data.status==1){
+        
+      }
+    });
+  }
+}
+
+function check_typing(){
+  var c_id=$(".chat-select").attr("id");
+  var tk=$("#create-msg-form").find('input[name=_token]').val();
+  if(c_id!=null && c_id!="" && !$("#msg").attr("disabled")){
+    var data_enviar = {
+      c_id:c_id,
+      _token: tk
+    };
+    fetch('check-active', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data_enviar),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('La solicitud no se completó correctamente');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if(data.status==1){
+        $("#typing_on").html(data.user_name+" typing ...");
+      }else{
+        $("#typing_on").html("");
+      }
+    });
+  }
+}
+
+function chat_update(){//para que se actualize constantemente la notificacion de cantida de mensajes nuevos
+  fetch('chat-update', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('La solicitud no se completó correctamente');
+    }
+    return response.json();
+  })
+  .then(data => {
+    $(".chat-item").each(function(){
+      var el=$(this);
+      var id=el.attr("id");
+
+      if(data!=""){
+        $.each(data,function(k,v){
+          if(id==k){
+            el.removeClass("new-msg");
+            $(".new-msg-count").remove();
+            el.addClass("new-msg");
+            el.append("<div class='new-msg-count'>"+v+'</div>');
+          }
+        })
+      }else{
+        el.removeClass("new-msg");
+        $(".new-msg-count").remove();
+      }
+    })
+  });
 }

@@ -23,8 +23,13 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 //el /home es la ruta, lo de arriba se refiere a la clase controladoe y llamas a la funcion index,
 //por costumbre siempre poner un name igual a la ruta
 Route::post('/chat', [App\Http\Controllers\ChatController::class, 'store']);
+Route::get('/chat-update', [App\Http\Controllers\ChatController::class, 'chat_update']);
 
 Route::post('/message', [App\Http\Controllers\MsgController::class, 'store']);
 Route::post('/message-list', [App\Http\Controllers\MsgController::class, 'message_list']);
 Route::post('/new-message-list', [App\Http\Controllers\MsgController::class, 'new_message_list']);
 Route::post('/message-seen', [App\Http\Controllers\MsgController::class, 'message_seen']);
+
+Route::post('/active', [App\Http\Controllers\ActiveChatController::class, 'store']);
+Route::post('/set-active', [App\Http\Controllers\ActiveChatController::class, 'set_active']);
+Route::post('/check-active', [App\Http\Controllers\ActiveChatController::class, 'check_active']);
