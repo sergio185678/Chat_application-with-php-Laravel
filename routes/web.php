@@ -17,11 +17,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//carga primero el welcome
+//sino esta autentificado carga solo el login y register
+//con autentificado puede cargar el home
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 //el /home es la ruta, lo de arriba se refiere a la clase controladoe y llamas a la funcion index,
 //por costumbre siempre poner un name igual a la ruta
+
+Route::get('/profile',[App\Http\Controllers\UserController::class, 'profile'])->name('profile');
+Route::post('/profile',[App\Http\Controllers\UserController::class, 'store'])->name('profile-save');
+Route::post('/pic',[App\Http\Controllers\UserController::class, 'pic'])->name('pic-save');
+Route::post('/password-update',[App\Http\Controllers\UserController::class, 'pass_update'])->name('pass-save');
+
 Route::post('/chat', [App\Http\Controllers\ChatController::class, 'store']);
 Route::get('/chat-update', [App\Http\Controllers\ChatController::class, 'chat_update']);
 

@@ -1,7 +1,7 @@
 @if (count($msgs)>0)
   @foreach ($msgs->reverse() as $msg)
     <div id="{{$msg->id}}" class="msg-item <?php echo ($msg->user_id == $me->id)?'me':''; ?>">
-      <img class="msg-item-img" src="{{asset('img/user-default.PNG')}}">
+      <img class="msg-item-img" src="{{asset('img/'.$msg->user->pic)}}" style="border-radius: 50%;">
       <div class="msg-item-txt">
           {{$msg->msg}}
           <div class="msg-item-data">

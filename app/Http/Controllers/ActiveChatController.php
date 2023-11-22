@@ -9,25 +9,6 @@ use App\Models\ActiveChat;
 
 class ActiveChatController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $this->validate($request,[
@@ -55,42 +36,11 @@ class ActiveChatController extends Controller
         return json_encode($resp);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
     public function set_active(Request $request){
         $cu=Auth::user()->id;
-        $chk=ActiveChat::where("user_id","=",$cu)->first();
+        $chk=ActiveChat::where("user_id","=",$cu)->first();//obtengo la primera fila  que cumpla eso
 
+        //guarda los cambios si esta escribiendo o no la persona en la tabla activechat
         if(!empty($chk)){
             $chk->typing=$request->con;
             $chk->save();
@@ -105,22 +55,25 @@ class ActiveChatController extends Controller
         return json_encode($resp);
     }
 
+    //se encarga de saber que usuarios estan escribiendo en un chat en especifico
     public function check_active(Request $request){
         $cu=Auth::user()->id;
         $chk=ActiveChat::where("chat_id","=",$request->c_id)->where("typing","=",1)->get();
 
-        $usr=[];
+        $usr=[];//crea un arreglo por si hay mas de una persona escribiendo
         if(count($chk)>0){
-            foreach($chk as $value){
+            foreach($chk as $value){//almacena todos los nombres de usuario usando su id
                 $u = User::find($value->user_id);
                 if($u->id != $cu){
                     $usr[]=$u->name;
                 }
             }
             if(count($usr)==1 && $usr != Auth::user()->name && $usr!=null){
+                //en caso que solo 1 esta escribiendo solo retorna el nombre de esa persona
                 $resp["user_name"]=$usr;
                 $resp["txt"]=1;
             }elseif(count($usr)>1){
+                //en caso haya mas le une en un string todos
                 $resp["user_name"]=implode(",",$usr);
                 $resp["txt"]=1;
             }else{

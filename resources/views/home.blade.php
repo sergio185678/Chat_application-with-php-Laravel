@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid row">
     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 col">
-        <div class="card">
+        <div class="card" id="c23">
             <div class="card-header">Chat list</div>
             <div id="chat-body" class="card-body">
                 @include("layouts.chat_list")
@@ -15,7 +15,7 @@
     <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 col">
         <div class="card">
             <div class="card-header">Conversation</div>
-            <div id="msg-body" class="card-body">
+            <div id="msg-body" class="card-body" style="padding-right:10px;">
                 @include("layouts.msg_list")
             </div>
             <div class="card-footer">

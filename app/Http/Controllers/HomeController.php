@@ -9,26 +9,18 @@ use App\Models\Chat;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    
     public function __construct()
     {
         $this->middleware('auth');
     }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
+    
     public function index()
     {
-        $users= User::allUser();
+        $users= User::allUser();//llama a una función del modelo User
+        //este es un ejemplo de ORM, revisar la funcion chats() para saber como construir los objetos
         $chats=Auth::user()->chats()->orderby("id","desc")->get();
-        $me =Auth::user();
+        $me =Auth::user(); //devuelve el objeto autenticado del usuario logeado
         $msgs=[];
         $total_msg=Chat::chat_update($chats);
         return view('home',compact("users","chats","me","msgs","total_msg"));

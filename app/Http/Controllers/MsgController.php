@@ -9,25 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MsgController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         $this->validate($request,[
@@ -39,14 +21,15 @@ class MsgController extends Controller
         $msg->msg=$request->msg;
         $msg->user_id=$cu;
         $msg->chat_id=$request->c_id;
-        $msg->seen=0;
-        $msg->save();
+        $msg->seen=0;//se estable predefinidamente que el mensaje no ha sido visto
+        $msg->save();//se debe guardar asi con ORM
         if(!empty($msg)){
             $resp["status"]=1;
             $resp["txt"]="Successfully Create A New Msg";
             $resp["obj"]=$msg;
 
             $c=Chat::find($request->c_id);
+            //fst se refiere que si solo hay un mensaje en total, o si hay mas de uno 
             if(count($c->msgs)>1){
                 $resp["fst"]=0;
             }else{
@@ -58,38 +41,27 @@ class MsgController extends Controller
         }
         return json_encode($resp);
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-
+    
+    //obtiene la lista de mensajes apartir del limite establecido
     public function message_list(Request $request)
     {
         $chat=Chat::find($request->c_id);
         if($request->limit>10){
-            $msgs=$chat->msgs()->take($request->limit)->skip($request->limit-10)->orberBy("id","desc")->get();
+            $total=$chat->msgs()->orderBy("id","desc")->get();
+            if(count($total)<$request->limit+10){
+                $resp["end"]=true;
+            }
+            $msgs=$chat->msgs()->take($request->limit)->skip($request->limit-10)->orderBy("id","desc")->get();
         } else{
             $msgs=$chat->msgs()->take($request->limit)->orderBy("id","desc")->get();
         }
         $me=Auth::user();
+        if(!isset($resp["end"])){
+            $resp["end"]=false;
+        }
         $resp['status']=1;
-        $resp['txt']=(string) view ('layouts.msg_list',compact("msgs","me"));
+        $resp['txt']=(string) view ('layouts.msg_list',compact("msgs","me"));//retorno como un html con nuevos mensajes
+        //para que el javascript pueda agregar estos nuevos mensajes ahi
         return json_encode($resp);
     }
 

@@ -3,11 +3,21 @@
     @foreach ($chats as $chat)
     <div id="{{$chat->id}}" class="chat-item">
         <div class="d-blockk">
+        <!-- Mira si el chat es grupal o individual -->
         @if(count($chat->users)>2)
-            <img class="chat-item-img" src="{{asset('img/group-default.png')}}">
+            <img class="chat-item-img" src="{{asset('img/group-default.png')}}" style="border-radius: 50%;">
         @else
-            <img class="chat-item-img" src="{{asset('img/user-default.PNG')}}">
+            <!-- Cambia la foto de perfil en los chats -->
+            <?php
+                foreach($chat->users as $u){
+                    if($me->id != $u->id){
+                        $img=$u->pic;
+                    }
+                }
+            ?>
+            <img class="chat-item-img" src="{{asset('img/'.$img)}}" style="border-radius: 50%;">
         @endif
+            <!-- Para poner el nombre de los integrantes del chat sin contar con nosotros -->
             <div class="chat-items-users">
                 <?php
                     $un=[];
@@ -21,6 +31,7 @@
                 ?>
             </div>
         </div>
+        <!-- Cantidad de mensajes nuevos -->
         <?php
             if(array_key_exists($chat->id,$total_msg)){
                 $c=($total_msg[$chat->id]>20)?"20+":$total_msg[$chat->id];

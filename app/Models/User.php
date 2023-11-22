@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Chat;
+use App\Models\Msg;
 
 class User extends Authenticatable
 {
@@ -47,6 +48,10 @@ class User extends Authenticatable
 
     public function chats(){
         return  $this->belongsToMany(Chat::class);
+    }
+
+    public function msgs(){
+        return  $this->hasMany(Msg::class);
     }
 
     static function allUser(){
